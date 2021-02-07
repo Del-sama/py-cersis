@@ -1,6 +1,7 @@
 import argparse
 import csv
 import os
+import time
 import typing
 
 from collections import namedtuple as nt
@@ -11,7 +12,6 @@ Problems = nt('Problems', 'question answer')
 
 class QuizException(Exception):
     """ Something went wrong while running the quiz """
-
 
 
 def main():
@@ -29,14 +29,20 @@ def main():
         quiz(problems, limit)
 
 
-def quiz(problems, limit):
+def quiz(problems: typing.List[Problems], limit: int):
+    start = time.time()
     correct = 0
     for idx, problem in enumerate(problems):
+        if time.time() - start >= limit:
+            print("Ops! You ran out of time")
+            print(f"Out of {len(problems)} you got {correct} right")
+            return
         print(f"Question number {idx+1} is {problem.question}? ")
         response = input()
         if response == problem.answer:
             correct += 1
-
+    print(f"Out of {len(problems)} you got {correct} right")
+    return
 
 
 def _is_valid_filename(filename: str) -> bool:
